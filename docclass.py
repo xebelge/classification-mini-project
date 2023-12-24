@@ -163,7 +163,8 @@ class fisherclassifier(classifier):
 
     def __init__(self,getfeatures):
         classifier.__init__(self,getfeatures)
-        self.minimums={}    
+        self.minimums={}
+        self.thresholds = {}
 
     def setminimum(self,cat,min):
         self.minimums[cat]=min
@@ -207,5 +208,8 @@ class fisherclassifier(classifier):
         if max < self.getminimum(best):
            return default
         return best
+
+    def setthreshold(self, cat, t):
+        self.thresholds[cat] = t
 
 

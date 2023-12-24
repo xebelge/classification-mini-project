@@ -66,12 +66,18 @@ def cross_validation(dataset, classifier_type, category_thresholds=None, k=5):
 def experiment_with_thresholds(dataset, classifier_type):
     thresholds = {'default': None, 'low': 0.1, 'high': 3.0}
     for threshold_name, threshold_value in thresholds.items():
+        print(f"\nExperimenting with {threshold_name} threshold:")
+        classifier = classifier_type(docclass.getwords)
+
         if threshold_value is not None:
             category_thresholds = {topic: threshold_value for topic in set([data[1] for data in dataset])}
+            if hasattr(classifier, 'setthreshold'):
+                set_thresholds(classifier, category_thresholds)
         else:
             category_thresholds = None
-        print(f"\nExperimenting with {threshold_name} threshold:")
+
         cross_validation(dataset, classifier_type, category_thresholds)
+
 
 def main():
     dataset_file = 'AAAI-14_Accepted_Papers_corrected.txt'
