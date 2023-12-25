@@ -2,37 +2,43 @@ import csv
 import random
 import docclass
 
+
 def load_dataset(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         dataset = [row for row in reader]
     return dataset
 
+
 def preprocess_dataset(dataset):
     preprocessed_data = []
     for row in dataset:
         title, abstract, topic = row[0], row[1], row[2]
-        content = title + ' ' + abstract 
+        content = title + ' ' + abstract
         preprocessed_data.append((content, topic))
     return preprocessed_data
+
 
 def save_preprocessed_dataset(preprocessed_data, filename='classifierdata.txt'):
     with open(filename, 'w', encoding='utf-8') as file:
         file.write("# Fields: Combined Title and Abstract, Topic\n")
         file.write("# Each line represents a document with its associated topic.\n")
         file.write("# The document content is a combination of its title and abstract.\n\n")
-        
+
         for content, topic in preprocessed_data:
             file.write(f"{content}\t{topic}\n")
     print(f"Dataset saved to {filename}")
+
 
 def set_thresholds(classifier, category_thresholds):
     for category, threshold in category_thresholds.items():
         classifier.setthreshold(category, threshold)
 
+
 def train_classifier(classifier, training_data):
     for content, topic in training_data:
         classifier.train(content, topic)
+
 
 def test_classifier(classifier, test_data):
     correct = 0
@@ -41,6 +47,7 @@ def test_classifier(classifier, test_data):
         if predicted == topic:
             correct += 1
     return correct / len(test_data)
+
 
 def cross_validation(dataset, classifier_type, category_thresholds=None, k=5):
     random.shuffle(dataset)
@@ -56,12 +63,13 @@ def cross_validation(dataset, classifier_type, category_thresholds=None, k=5):
             set_thresholds(classifier, category_thresholds)
         train_classifier(classifier, training_data)
         accuracy = test_classifier(classifier, test_data)
-        print(f"Fold {i+1}: Accuracy = {accuracy}")
+        print(f"Fold {i + 1}: Accuracy = {accuracy}")
         overall_accuracies.append(accuracy)
 
     average_accuracy = sum(overall_accuracies) / len(overall_accuracies)
     print(f"Average Accuracy over {k} folds: {average_accuracy}")
     return average_accuracy
+
 
 def experiment_with_thresholds(dataset, classifier_type):
     thresholds = {'default': None, 'low': 0.1, 'high': 3.0}
@@ -90,6 +98,7 @@ def main():
 
     cross_validation(preprocessed_dataset, classifier_type)
     experiment_with_thresholds(preprocessed_dataset, classifier_type)
+
 
 if __name__ == "__main__":
     main()
